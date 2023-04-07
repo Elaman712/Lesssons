@@ -1,0 +1,26 @@
+*{
+margin: 0%;
+padding: 0%;
+box-sizing: border-box;
+}
+h1{
+    color: red;
+}
+.first{
+    color: green;
+}
+#second{
+    color: orange;
+}
+main, footer,.border{
+    background-color: green;
+    color: #000;
+    width: 600px;
+    margin: 15px auto;
+}
+.news h2{
+    color: red;
+}
+.news p{
+    color: blue;
+}

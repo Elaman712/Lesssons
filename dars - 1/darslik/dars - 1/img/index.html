@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="ru" class="offline"><head>
+    <meta charset="utf-8">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#fff">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,
+                                   maximum-scale=1.0, user-scalable=no">
+    <title>www.google.com</title>
+    <style>/* Copyright 2017 The Chromium Authors
+   * Use of this source code is governed by a BSD-style license that can be
+   * found in the LICENSE file. */
+  
+  a {
+    color: var(--link-color);
+  }
+  
+  body {
+
+  }
+  
+  .offline .controller {
+    height: 100vh;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    z-index: 9;
+  }
+  
+  #offline-resources {
+    display: none;
+  }
+  
+  #offline-instruction {
+    image-rendering: pixelated;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    top: 60px;
+    width: fit-content;
+  }
+  
+  .offline-runner-live-region {
+    bottom: 0;
+    clip-path: polygon(0 0, 0 0, 0 0);
+    color: var(--background-color);
+    display: block;
+    font-size: xx-small;
+    overflow: hidden;
+    position: absolute;
+    text-align: center;
+    transition: color 1.5s cubic-bezier(0.65, 0.05, 0.36, 1);
+    user-select: none;
+  }
+  
+  /* Custom toggle */
+  .slow-speed-option {
+    align-items: center;
+    background: var(--google-gray-50);
+    border-radius: 24px/50%;
+    bottom: 0;
+    color: var(--error-code-color);
+    display: inline-flex;
+    font-size: 1em;
+    left: 0;
+    line-height: 1.1em;
+    margin: 5px auto;
+    padding: 2px 12px 3px 20px;
+    position: absolute;
+    right: 0;
+    width: max-content;
+    z-index: 999;
+  }
+  
+  .slow-speed-option.hidden {
+    display: none;
+  }
+  
+  .slow-speed-option [type=checkbox] {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+  }
+  
+  .slow-speed-option .slow-speed-toggle {
+    cursor: pointer;
+    margin-inline-start: 8px;
+    padding: 8px 4px;
+    position: relative;
+  }
+  
+  .slow-speed-option [type=checkbox]:disabled ~ .slow-speed-toggle {
+    cursor: default;
+  }
+  
+  .slow-speed-option-label [type=checkbox] {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+  }
+  
+  .slow-speed-option .slow-speed-toggle::before,
+  .slow-speed-option .slow-speed-toggle::after {
+    content: '';
+    display: block;
+    margin: 0 3px;
+    transition: all 100ms cubic-bezier(0.4, 0, 1, 1);
+  }
+  
+  .slow-speed-option .slow-speed-toggle::before {
+    background: rgb(189,193,198);
+    border-radius: 0.65em;
+    height: 0.9em;
+    width: 2em;
+  }
+  
+  .slow-speed-option .slow-speed-toggle::after {
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 40%);
+    height: 1.2em;
+    position: absolute;
+    top: 51%;
+    transform: translate(-20%, -50%);
+    width: 1.1em;
+  }
+  
+  .slow-speed-option [type=checkbox]:focus + .slow-speed-toggle {
+    box-shadow: 0 0 8px rgb(94, 158, 214);
+    outline: 1px solid rgb(93, 157, 213);
+  }
+  
+  .slow-speed-option [type=checkbox]:checked + .slow-speed-toggle::before {
+    background: var(--google-blue-600);
+    opacity: 0.5;
+  }
+  
+  .slow-speed-option [type=checkbox]:checked + .slow-speed-toggle::after {
+    background: var(--google-blue-600);
+    transform: translate(calc(2em - 90%), -50%);
+  }
+  
+  .slow-speed-option [type=checkbox]:checked:disabled +
+    .slow-speed-toggle::before {
+    background: rgb(189,193,198);
+  }
+  
+  .slow-speed-option [type=checkbox]:checked:disabled +
+    .slow-speed-toggle::after {
+    background: var(--google-gray-50);
+  }
+  
+  @media (max-width: 420px) {
+    #download-button {
+      padding-bottom: 12px;
+      padding-top: 12px;
+    }
+  
+    .suggested-left > #control-buttons,
+    .suggested-right > #control-buttons {
+      float: none;
+    }
+  
+    .snackbar {
+      border-radius: 0;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
+  }
+  
+  @media (max-height: 350px) {
+    h1 {
+      margin: 0 0 15px;
+    }
+  
+    .icon-offline {
+      margin: 0 0 10px;
+    }
+  
+    .interstitial-wrapper {
+      margin-top: 5%;
+    }
+  
+    .nav-wrapper {
+      margin-top: 30px;
+    }
+  }
+  
+  @media (min-width: 420px) and (max-width: 736px) and
+         (min-height: 240px) and (max-height: 420px) and
+         (orientation:landscape) {
+    .interstitial-wrapper {
+      margin-bottom: 100px;
+    }
+  }
+  
+  @media (max-width: 360px) and (max-height: 480px) {
+    .offline .interstitial-wrapper {
+      padding-top: 60px;
+    }
+  
+    .offline .runner-container {
+      top: 8px;
+    }
+  }
+  
+  @media (min-height: 240px) and (orientation: landscape) {
+    .offline .interstitial-wrapper {
+      margin-bottom: 90px;
+    }
+  
+    .icon-offline {
+      margin-bottom: 20px;
+    }
+  }
+  
+  @media (max-height: 320px) and (orientation: landscape) {
+    .icon-offline {
+      margin-bottom: 0;
+    }
+  
+    .offline .runner-container {
+      top: 10px;
+    }
+  }
+  
+  @media (max-width: 240px) {
+    button {
+      padding-inline-end: 12px;
+      padding-inline-start: 12px;
+    }
+  
+    .interstitial-wrapper {
+      overflow: inherit;
+      padding: 0 8px;
+    }
+  }
+  
+  @media (max-width: 120px) {
+    button {
+      width: auto;
+    }
+  }
+  
+  .arcade-mode,
+  .arcade-mode .runner-container,
+  .arcade-mode .runner-canvas {
+    image-rendering: pixelated;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+  .arcade-mode #buttons,
+  .arcade-mode #main-content {
+    opacity: 0;
+    overflow: hidden;
+  }
+  
+  .arcade-mode .interstitial-wrapper {
+    height: 100vh;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+  .arcade-mode .runner-container {
+    left: 0;
+    margin: auto;
+    right: 0;
+    transform-origin: top center;
+    transition: transform 250ms cubic-bezier(0.4, 0, 1, 1) 400ms;
+    z-index: 2;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .icon {
+      filter: invert(1);
+    }
+  
+    .offline .runner-canvas {
+      filter: invert(1);
+    }
+  
+    .offline.inverted {
+      background-color: var(--background-color);
+      filter: invert(0);
+    }
+  
+    .offline.inverted body {
+      background-color: #fff;
+    }
+  
+    .offline.inverted .offline-runner-live-region {
+      color: #fff;
+    }
+  
+    #suggestions-list a {
+      color: var(--link-color);
+    }
+  
+    #error-information-button {
+      filter: invert(0.6);
+    }
+  
+    .slow-speed-option {
+      background: var(--google-gray-800);
+      color: var(--google-gray-100);
+    }
+  
+    .slow-speed-option .slow-speed-toggle::before,
+    .slow-speed-option [type=checkbox]:checked:disabled +
+      .slow-speed-toggle::before {
+       background: rgb(189,193,198);
+    }
+  
+    .slow-speed-option [type=checkbox]:checked + .slow-speed-toggle::after,
+    .slow-speed-option [type=checkbox]:checked + .slow-speed-toggle::before {
+      background: var(--google-blue-300);
+    }
+  }
+  </style>
+   
+  var errorPageController;
+  
+  const HIDDEN_CLASS = 'hidden';
+  
+  // Decodes a UTF16 string that is encoded as base64.
+  function decodeUTF16Base64ToString(encoded_text) {
+    const data = atob(encoded_text);
+    let result = '';
+    for (let i = 0; i < data.length; i += 2) {
+      result +=
+          String.fromCharCode(data.charCodeAt(i) * 256 + data.charCodeAt(i + 1));
+    }
+    return result;
+  }
+  
+  function toggleHelpBox() {
+    const helpBoxOuter = document.getElementById('details');
+    helpBoxOuter.classList.toggle(HIDDEN_CLASS);
+    const detailsButton = document.getElementById('details-button');
+    if (helpBoxOuter.classList.contains(HIDDEN_CLASS)) {
+      /** @suppress {missingProperties} */
+      detailsButton.innerText = detailsButton.detailsText;
+    } else {
+      /** @suppress {missingProperties} */
+      detailsButton.innerText = detailsButton.hideDetailsText;
+    }
+  
+    // Details appears over the main content on small screens.
+    if (mobileNav) {
+      document.getElementById('main-content').classList.toggle(HIDDEN_CLASS);
+      const runnerContainer = document.querySelector('.runner-container');
+      if (runnerContainer) {
+        runnerContainer.classList.toggle(HIDDEN_CLASS);
+      }
+    }
+  }
+  
+  function diagnoseErrors() {
+    i
+  }
+  
+  // Re-renders the error page using |strings| as the dictionary of values.
+  // Used by NetErrorTabHelper to update DNS error pages with probe results.
+  function updateForDnsProbe(strings) {
+    const context = new JsEvalContext(strings);
+    jstProcess(context, document.getElementById('t'));
+    onDocumentLoadOrUpdate();
+  }
+  
+  // Adds an icon class to the list and removes classes previously set.
+  function updateIconClass(newClass) {
+    const frameSelector = isSubFrame ? '#sub-frame-error' : '#main-frame-error';
+    const iconEl = document.querySelector(frameSelector + ' .icon');
+  
+    if (iconEl.classList.contains(newClass)) {
+      return;
+    }
+  
+    iconEl.className = 'icon ' + newClass;
+  }
+  
+  
+    }
+  }
+  
+  function downloadButtonClick() {
+    if (window.errorPageController) {
+      errorPageController.downloadButtonClick();
+      const downloadButton = document.getElementById('download-button');
+      downloadButton.disabled = true;
+      /** @suppress {missingProperties} */
+      downloadButton.textContent = downloadButton.disabledText;
+  
+      document.getElementById('download-link-wrapper')
+          .classList.add(HIDDEN_CLASS);
+      document.getElementById('download-link-clicked-wrapper')
+          .classList.remove(HIDDEN_CLASS);
+    }
+  }
+  
+  function detailsButtonClick() {
+    if (window.errorPageController) {
+      errorPageController.detailsButtonClick();
+    }
+  }
+  
+  let primaryControlOnLeft = true;
+  // clang-format off
+  // 
+  
+  function setAutoFetchState(scheduled, can_schedule) {
+    document.getElementById('cancel-save-page-button')
+        .classList.toggle(HIDDEN_CLASS, !scheduled);
+    document.getElementById('save-page-for-later-button')
+        .classList.toggle(HIDDEN_CLASS, scheduled || !can_schedule);
+  }
+  
+  function savePageLaterClick() {
+    errorPageController.savePageForLater();
+    // savePageForLater will eventually trigger a call to setAutoFetchState() when
+    // it completes.
+  }
+  
+  function cancelSavePageClick() {
+    errorPageController.cancelSavePage();
+    // setAutoFetchState is not called in response to cancelSavePage(), so do it
+    // now.
+    setAutoFetchState(false, true);
+  }
+  
+  function toggleErrorInformationPopup() {
+    document.getElementById('error-information-popup-container')
+        .classList.toggle(HIDDEN_CLASS);
+  }
+  
+  function launchOfflineItem(itemID, name_space) {
+    errorPageController.launchOfflineItem(itemID, name_space);
+  }
+  
+  function launchDownloadsPage() {
+    errorPageController.launchDownloadsPage();
+  }
+  
+  function getIconForSuggestedItem(item) {
+    // Note: |item.content_type| contains the enum values from
+    // chrome::mojom::AvailableContentType.
+    switch (item.content_type) {
+      case 1:  // kVideo
+        return 'image-video';
+      case 2:  // kAudio
+        return 'image-music-note';
+      case 0:  // kPrefetchedPage
+      case 3:  // kOtherPage
+        return 'image-earth';
+    }
+    return 'image-file';
+  }
+  
+  function getSuggestedContentDiv(item, index) {
+    // Note: See AvailableContentToValue in available_offline_content_helper.cc
+    // for the data contained in an |item|.
+    // TODO(carlosk): Present |snippet_base64| when that content becomes
+    // available.
+    let thumbnail = '';
+    const extraContainerClasses = [];
+  lity(false);
+    }
+  }
+  
+  function toggleOfflineContentListVisibility(updatePref) {
+   
+  
+    const reloadButton = document.getElementById('reload-button');
+    const downloadButton = document.getElementById('download-button');
+    if (reloadButton.style.display === 'none' &&
+        downloadButton.style.display === 'none') {
+      detailsButton.classList.add('singular');
+    }
+  
+    // Show or hide control buttons.
+    const controlButtonDiv = document.getElementById('control-buttons');
+    controlButtonDiv.hidden =
+        of
+  
+  document.addEventListener('DOMContentLoaded', onDocumentLoad);
+  </script>
+    <script>// Copyright 2015 The Chromium Authors
+  // Use of this source code is governed by a BSD-style license that can be
+  // found in the LICENSE file.
+  
+  let mobileNav = false;
+  
+  /**
+   * For small screen mobile the navigation buttons are moved
+   * below the advanced text.
+   */
+  function onResize() {
+    const helpOuterBox = document.querySelector('#details');
+    const mainContent = document.querySelector('#main-content');
+    const mediaQuery = '(min-width: 240px) and (max-width: 420px) and ' +
+        '(min-height: 401px), ' +
+        '(max-height: 560px) and (min-height: 240px) and ' +
+        '(min-width: 421px)';
+  
+    const detailsHidden = helpOuterBox.classList.contains(HIDDEN_CLASS);
+    const runnerContainer = document.querySelector('.runner-container');
+  
+    // Check for change in nav status.
+    if (mobileNav !== window.matchMedia(mediaQuery).matches) {
+      mobileNav = !mobileNav;
+  
+      // Handle showing the top content / details sections according to state.
+      if (mobileNav) {
+        mainContent.classList.toggle(HIDDEN_CLASS, !detailsHidden);
+        helpOuterBox.classList.toggle(HIDDEN_CLASS, detailsHidden);
+        if (runnerContainer) {
+          runnerContainer.classList.toggle(HIDDEN_CLASS, !detailsHidden);
+        }
+      } else if (!detailsHidden) {
+        // Non mobile nav with visible details.
+        mainContent.classList.remove(HIDDEN_CLASS);
+        helpOuterBox.classList.remove(HIDDEN_CLASS);
+        if (runnerContainer) {
+          runnerContainer.classList.remove(HIDDEN_CLASS);
+        }
+      }
+    }
+  }
+  
+  function setupMobileNav() {
+    window.addEventListener('resize', onResize);
+    onResize();
+  }
+  
+  document.addEventListener('DOMContentLoaded', setupMobileNav);
+  </script>
+    <script>// Copyright 2014 The Chromium Authors
+  // Use of this source code is governed by a BSD-style license that can be
+  // found in the LICENSE file.
+  
+  /**
+   * T-Rex runner.
+   * @param {string} outerContainerId Outer containing element id.
+   * @param {!Object=} opt_config
+   * @constructor
+   * @implements {EventListener}
+   * @export
+   */
+  function Runner(outerContainerId, opt_config) {
+    // Singleton
+    if (Runner.instance_) {
+      return Runner.instance_;
+    }
+    Runner.instance_ = this;
+  
+    this.outerContainerEl = document.querySelector(outerContainerId);
+    this.containerEl = null;
+    this.snackbarEl = null;
+    // A div to intercept touch events. Only set while (playing && useTouch).
+    this.touchController = null;
+  
+    this.config = opt_config || Object.assign(Runner.config, Runner.normalConfig);
+    // Logical dimensions of the container.
+    this.dimensions = Runner.defaultDimensions;
+  
+    this.gameType = null;
+    Runner.spriteDefinition = Runner.spriteDefinitionByType['original'];
+  
+    this.altGameImageSprite = null;
+    this.altGameModeActive = false;
+    this.altGameModeFlashTimer = null;
+    this.fadeInTimer = 0;
+  
+    this.canvas = null;
+    this.canvasCtx = null;
+  
+    this.tRex = null;
+  
+    this.distanceMeter = null;
+    this.distanceRan = 0;
+  
+    this.highestScore = 0;
+    this.syncHighestScore = false;
+  
+    this.time = 0;
+    this.runningTime = 0;
+    this.msPerFrame = 1000 / FPS;
+    this.currentSpeed = this.config.SPEED;
+    Runner.slowDown = false;
+  
+    this.obstacles = [];
+  
+    this.activated = false; // Whether the easter egg has been activated.
+    this.playing = false; // Whether the game is currently in play state.
+    this.crashed = false;
+    this.paused = false;
+    this.inverted = false;
+    this.invertTimer = 0;
+    this.resizeTimerId_ = null;
+  
+    this.playCount = 0;
+  
+    // Sound FX.
+    this.audioBuffer = null;
+  
+    /** @type {Object} */
+    this.soundFx = {};
+    this.generatedSoundFx = null;
+  
+    // Global web audio context for playing sounds.
+    this.audioContext = null;
+  
+    // Images.
+    this.images = {};
+    this.imagesLoaded = 0;
+  
+    // Gamepad state.
+    this.pollingGamepads = false;
+    this.gamepadIndex = undefined;
+    this.previousGamepad = null;
+  
+    if (this.isDisabled()) {
+      this.setupDisabledRunner();
+    } else {
+      if (Runner.isAltGameModeEnabled()) {
+        this.initAltGameType();
+        Runner.gameType = this.gameType;
+      }
+      this.loadImages();
+  
+      window['initializeEasterEggHighScore'] =
+          this.initializeHighScore.bind(this);
+    }
+  }
+  
+  /**
+   * Default game width.
+   * @const
+   */
+  const DEFAULT_WIDTH = 600;
+  
+  /**
+   * Frames per second.
+   * @const
+   */
+  const FPS = 60;
+ 
+      this.spritePos = spritePos;
+      const spriteDefinition = Runner.spriteDefinition['TREX'];
+  
+      // Update animation frames.
+      Trex.animFrames.RUNNING.frames =
+          [spriteDefinition.RUNNING_1.x, spriteDefinition.RUNNING_2.x];
+      Trex.animFrames.CRASHED.frames = [spriteDefinition.CRASHED.x];
+  
+      if (typeof spriteDefinition.JUMPING.x == 'object') {
+        Trex.animFrames.JUMPING.frames = spriteDefinition.JUMPING.x;
+      } else {
+        Trex.animFrames.JUMPING.frames = [spriteDefinition.JUMPING.x];
+      }
+  
+      Trex.animFrames.DUCKING.frames =
+          [spriteDefinition.RUNNING_1.x, spriteDefinition.RUNNING_2.x];
+  
+      // Update Trex config
+      Trex.config.GRAVITY = spriteDefinition.GRAVITY || Trex.config.GRAVITY;
+      Trex.config.HEIGHT = spriteDefinition.RUNNING_1.h,
+      Trex.config.INITIAL_JUMP_VELOCITY = spriteDefinition.INITIAL_JUMP_VELOCITY;
+      Trex.config.MAX_JUMP_HEIGHT = spriteDefinition.MAX_JUMP_HEIGHT;
+      Trex.config.MIN_JUMP_HEIGHT = spriteDefinition.MIN_JUMP_HEIGHT;
+      Trex.config.WIDTH = spriteDefinition.RUNNING_1.w;
+      Trex.config.WIDTH_JUMP = spriteDefinition.JUMPING.w;
+      Trex.config.INVERT_JUMP = spriteDefinition.INVERT_JUMP;
+  
+      this.adjustAltGameConfigForSlowSpeed(spriteDefinition.GRAVITY);
+      this.config = Trex.config;
+  
+      // Adjust bottom horizon placement.
+      this.groundYPos = Runner.defaultDimensions.HEIGHT - this.config.HEIGHT -
+          Runner.spriteDefinition['BOTTOM_PAD'];
+      this.yPos = this.groundYPos;
+      this.reset();
+    },
+  
+    /**
+     * Slow speeds adjustments for the alt game modes.
+     * @param {number=} opt_gravityValue
+     */
+    adjustAltGameConfigForSlowSpeed: function(opt_gravityValue) {
+      if (Runner.slowDown) {
+        if (opt_gravityValue) {
+          Trex.config.GRAVITY = opt_gravityValue / 1.5;
+        }
+        Trex.config.MIN_JUMP_HEIGHT *= 1.5;
+        Trex.config.MAX_JUMP_HEIGHT *= 1.5;
+        Trex.config.INITIAL_JUMP_VELOCITY =
+            Trex.config.INITIAL_JUMP_VELOCITY * 1.5;
+      }
+    },
+  
+    /**
+     * Setter whether dino is flashing.
+     * @param {boolean} status
+     */
+    setFlashing: function(status) {
+      this.flashing = status;
+    },
+  
+    /**
+     * Setter for the jump velocity.
+     * The approriate drop velocity is also set.
+     * @param {number} setting
+     */
+    setJumpVelocity(setting) {
+      this.config.INITIAL_JUMP_VELOCITY = -setting;
+      this.config.DROP_VELOCITY = -setting / 2;
+    },
+  
+    /**
+     * Set the animation status.
+     * @param {!number} deltaTime
+     * @param {Trex.status=} opt_status Optional status to switch to.
+     */
+    update(deltaTime, opt_status) {
+      this.timer += deltaTime;
+  
+      // Update the status.
+      if (opt_status) {
+        this.status = opt_status;
+        this.currentFrame = 0;
+        this.msPerFrame = Trex.animFrames[opt_status].msPerFrame;
+        this.currentAnimFrames = Trex.animFrames[opt_status].frames;
+  
+        if (opt_status === Trex.status.WAITING) {
+          this.animStartTime = getTimeStamp();
+          this.setBlinkDelay();
+        }
+      }
+      // Game intro animation, T-rex moves in from the left.
+      if (this.playingIntro && this.xPos < this.config.START_X_POS) {
+        this.xPos += Math.round((this.config.START_X_POS /
+            this.config.INTRO_DURATION) * deltaTime);
+        this.xInitialPos = this.xPos;
+      }
+  
+      if (this.status === Trex.status.WAITING) {
+        this.blink(getTimeStamp());
+      } else {
+        this.draw(this.currentAnimFrames[this.currentFrame], 0);
+      }
+  
+      // Update the frame position.
+      if (!this.flashing && this.timer >= this.msPerFrame) {
+        this.currentFrame = this.currentFrame ==
+            this.currentAnimFrames.length - 1 ? 0 : this.currentFrame + 1;
+        this.timer = 0;
+      }
+  
+      if (!this.altGameModeEnabled) {
+        // Speed drop becomes duck if the down key is still being pressed.
+        if (this.speedDrop && this.yPos === this.groundYPos) {
+          this.speedDrop = false;
+          this.setDuck(true);
+        }
+      }
+    },
+  
+    /**
+     * Draw the t-rex to a particular position.
+     * @param {number} x
+     * @param {number} y
+     */
+    draw(x, y) {
+      let sourceX = x;
+      let sourceY = y;
+      let sourceWidth = this.ducking && this.status !== Trex.status.CRASHED ?
+          this.config.WIDTH_DUCK :
+          this.config.WIDTH;
+      l
